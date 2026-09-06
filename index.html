@@ -1,0 +1,3687 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#05020a">
+<title>ARZOO — Our Little Universe ❤️</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+
+:root{
+  --pink:#ff4f91;
+  --rose:#ff9fc5;
+  --purple:#a875ff;
+  --blue:#789bff;
+  --white:#fff;
+  --line:rgba(255,255,255,.13);
+  --safe-top:env(safe-area-inset-top);
+  --safe-bottom:env(safe-area-inset-bottom);
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#020106;
+  color:#fff;
+  font-family:"Vazirmatn",Tahoma,sans-serif;
+  touch-action:manipulation;
+}
+
+body{
+  overscroll-behavior:none;
+}
+
+button{
+  font-family:inherit;
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+#stars{z-index:0}
+#particles{z-index:4}
+
+.vignette{
+  position:fixed;
+  inset:0;
+  z-index:5;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 42%,
+      transparent 8%,
+      rgba(0,0,0,.18) 52%,
+      rgba(0,0,0,.9) 100%);
+}
+
+.noise{
+  position:fixed;
+  inset:-60%;
+  z-index:6;
+  pointer-events:none;
+  opacity:.018;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:noise .18s infinite;
+}
+
+@keyframes noise{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(2%,-1%)}
+  50%{transform:translate(-1%,2%)}
+  75%{transform:translate(1%,1%)}
+  100%{transform:translate(0,0)}
+}
+
+#app{
+  position:fixed;
+  inset:0;
+  z-index:10;
+}
+
+.screen{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  padding:
+    calc(24px + var(--safe-top))
+    22px
+    calc(24px + var(--safe-bottom));
+  opacity:0;
+  visibility:hidden;
+  transform:scale(1.035);
+  transition:
+    opacity .8s ease,
+    transform 1s cubic-bezier(.2,.8,.2,1);
+}
+
+.screen.active{
+  opacity:1;
+  visibility:visible;
+  transform:scale(1);
+}
+
+.topbar{
+  position:fixed;
+  top:calc(15px + var(--safe-top));
+  left:16px;
+  right:16px;
+  z-index:100;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  pointer-events:none;
+}
+
+.topbar>*{
+  pointer-events:auto;
+}
+
+.icon-btn{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.045);
+  color:#fff;
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+  font-size:14px;
+}
+
+.memory-counter{
+  color:rgba(255,255,255,.4);
+  font-size:9px;
+  letter-spacing:3px;
+  direction:ltr;
+}
+
+.progress{
+  position:fixed;
+  bottom:calc(12px + var(--safe-bottom));
+  left:20px;
+  right:20px;
+  height:2px;
+  background:rgba(255,255,255,.08);
+  z-index:100;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.progress i{
+  display:block;
+  width:0;
+  height:100%;
+  background:linear-gradient(90deg,var(--purple),var(--pink));
+  transition:width .8s ease;
+}
+
+.primary-btn{
+  margin-top:42px;
+  padding:15px 32px;
+  border:1px solid rgba(255,255,255,.17);
+  border-radius:100px;
+  color:white;
+  background:rgba(255,255,255,.055);
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+  font-size:14px;
+  box-shadow:0 15px 45px rgba(0,0,0,.25);
+}
+
+.primary-btn:active{
+  transform:scale(.94);
+}
+
+/* INTRO */
+
+.intro{
+  text-align:center;
+  width:100%;
+}
+
+.logo-orbit{
+  position:relative;
+  width:132px;
+  height:132px;
+  margin:0 auto 38px;
+}
+
+.logo-orbit:before,
+.logo-orbit:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:50%;
+}
+
+.logo-orbit:before{
+  transform:rotate(55deg) scaleX(.58);
+}
+
+.logo-orbit:after{
+  transform:rotate(-55deg) scaleX(.58);
+}
+
+.orbit-dot{
+  position:absolute;
+  width:7px;
+  height:7px;
+  background:white;
+  border-radius:50%;
+  box-shadow:0 0 18px #fff;
+  top:3px;
+  left:50%;
+  transform-origin:0 63px;
+  animation:orbit 5s linear infinite;
+}
+
+@keyframes orbit{
+  to{transform:rotate(360deg)}
+}
+
+.core{
+  position:absolute;
+  width:54px;
+  height:54px;
+  top:39px;
+  left:39px;
+  border-radius:50%;
+  background:
+    radial-gradient(
+      circle,
+      #fff 0,
+      #ffb5d4 15%,
+      #ff4f91 42%,
+      transparent 72%
+    );
+  filter:drop-shadow(0 0 25px rgba(255,79,145,.8));
+  animation:core 2.4s ease-in-out infinite;
+}
+
+@keyframes core{
+  0%,100%{transform:scale(.85)}
+  50%{transform:scale(1.12)}
+}
+
+.intro h1{
+  font-size:clamp(29px,8vw,48px);
+  line-height:1.5;
+  font-weight:800;
+}
+
+.intro p{
+  margin-top:13px;
+  color:rgba(255,255,255,.38);
+  font-size:11px;
+  letter-spacing:3px;
+  direction:ltr;
+}
+
+/* SCAN */
+
+.system{
+  width:100%;
+  max-width:460px;
+}
+
+.system-title{
+  text-align:center;
+  font-size:25px;
+  margin-bottom:22px;
+}
+
+.terminal{
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:21px;
+  padding:20px;
+  background:rgba(0,0,0,.4);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+
+.term-top{
+  display:flex;
+  gap:6px;
+  margin-bottom:20px;
+}
+
+.term-top b{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:rgba(255,255,255,.18);
+}
+
+.term-line{
+  height:29px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  direction:ltr;
+  font:11px monospace;
+  color:rgba(255,255,255,.57);
+  border-bottom:1px solid rgba(255,255,255,.045);
+}
+
+.ok{
+  color:#88ffc0!important;
+}
+
+.special{
+  color:#ff9fc5!important;
+}
+
+.term-bar{
+  height:2px;
+  margin-top:18px;
+  background:rgba(255,255,255,.07);
+}
+
+.term-bar i{
+  display:block;
+  width:0;
+  height:100%;
+  background:linear-gradient(90deg,var(--purple),var(--pink));
+}
+
+/* MEMORY */
+
+.memory-wrap{
+  width:100%;
+  text-align:center;
+}
+
+.memory-wrap h2{
+  font-size:26px;
+  line-height:1.7;
+}
+
+.memory-wrap>p{
+  color:rgba(255,255,255,.39);
+  font-size:12px;
+  margin:6px 0 27px;
+}
+
+.memory-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:11px;
+  width:100%;
+}
+
+.memory-card{
+  height:112px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(255,255,255,.04);
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:8px;
+  opacity:0;
+  transform:translateY(25px) scale(.94);
+  transition:.7s cubic-bezier(.2,.8,.2,1);
+}
+
+.memory-card.show{
+  opacity:1;
+  transform:none;
+}
+
+.memory-card b{
+  font-size:25px;
+}
+
+.memory-card small{
+  color:rgba(255,255,255,.53);
+  font-size:10px;
+}
+
+/* HOLD */
+
+.interaction{
+  text-align:center;
+  width:100%;
+}
+
+.ring{
+  position:relative;
+  width:170px;
+  height:170px;
+  margin:0 auto 35px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ring:before,
+.ring:after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.13);
+}
+
+.ring:before{
+  inset:0;
+  animation:ringSpin 8s linear infinite;
+}
+
+.ring:after{
+  inset:18px;
+  border-color:rgba(255,79,145,.22);
+  animation:ringSpin 5s linear infinite reverse;
+}
+
+@keyframes ringSpin{
+  to{transform:rotate(360deg)}
+}
+
+.ring-core{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  background:
+    radial-gradient(
+      circle,
+      #fff,
+      #ff9bc4 22%,
+      #ff4f91 45%,
+      transparent 72%
+    );
+  box-shadow:0 0 55px rgba(255,79,145,.6);
+  animation:core 1.8s infinite;
+}
+
+.interaction h2{
+  font-size:27px;
+}
+
+.interaction p{
+  color:rgba(255,255,255,.4);
+  font-size:12px;
+  margin-top:10px;
+}
+
+/* NAME */
+
+.name-wrap{
+  text-align:center;
+}
+
+.name-label{
+  color:rgba(255,255,255,.35);
+  font-size:9px;
+  letter-spacing:5px;
+  direction:ltr;
+}
+
+.arzoo{
+  margin-top:20px;
+  font-size:clamp(64px,20vw,120px);
+  letter-spacing:7px;
+  font-weight:800;
+  direction:ltr;
+  background:
+    linear-gradient(
+      110deg,
+      #fff,
+      #ff9fc5,
+      #ae88ff,
+      #fff
+    );
+  background-size:300% 100%;
+  color:transparent;
+  -webkit-background-clip:text;
+  background-clip:text;
+  animation:gradient 5s linear infinite;
+  filter:drop-shadow(0 0 22px rgba(255,79,145,.4));
+}
+
+@keyframes gradient{
+  to{background-position:300% 0}
+}
+
+.name-sub{
+  margin-top:17px;
+  color:rgba(255,255,255,.48);
+  font-size:12px;
+}
+
+/* TIMELINE */
+
+.timeline{
+  width:100%;
+  max-width:460px;
+  text-align:center;
+}
+
+.timeline h2{
+  font-size:27px;
+  margin-bottom:25px;
+}
+
+.timeline-box{
+  min-height:250px;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:25px 20px;
+  background:rgba(255,255,255,.04);
+  backdrop-filter:blur(17px);
+  -webkit-backdrop-filter:blur(17px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+}
+
+.timeline-icon{
+  font-size:35px;
+  margin-bottom:17px;
+  transition:.3s;
+}
+
+.timeline-big{
+  font-size:22px;
+  font-weight:700;
+  transition:.3s;
+}
+
+.timeline-small{
+  color:rgba(255,255,255,.45);
+  font-size:12px;
+  line-height:2;
+  margin-top:10px;
+  transition:.3s;
+}
+
+.timeline-dots{
+  display:flex;
+  gap:6px;
+  margin-top:22px;
+}
+
+.timeline-dots i{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:rgba(255,255,255,.2);
+  transition:.3s;
+}
+
+.timeline-dots i.active{
+  width:20px;
+  border-radius:10px;
+  background:#ff7eae;
+}
+
+/* =========================================================
+   MEDIA SECTION
+========================================================= */
+
+.media-wrap{
+  width:100%;
+  max-width:460px;
+  text-align:center;
+}
+
+.media-title{
+  font-size:25px;
+  margin-bottom:9px;
+}
+
+.media-subtitle{
+  color:rgba(255,255,255,.4);
+  font-size:11px;
+  margin-bottom:18px;
+}
+
+/* دکمه‌های عکس و ویدیو */
+
+.media-tabs{
+  width:100%;
+  max-width:370px;
+  margin:0 auto 18px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+
+.media-tab{
+  min-height:48px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:15px;
+  background:rgba(255,255,255,.045);
+  color:rgba(255,255,255,.55);
+  font-family:inherit;
+  font-size:10px;
+  transition:.35s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  flex-direction:column;
+}
+
+.media-tab span{
+  font-size:13px;
+}
+
+.media-tab.active{
+  color:#fff;
+  border-color:rgba(255,111,164,.55);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,79,145,.2),
+      rgba(168,117,255,.14)
+    );
+  box-shadow:
+    0 10px 35px rgba(255,79,145,.12),
+    inset 0 0 20px rgba(255,255,255,.025);
+  transform:translateY(-2px);
+}
+
+.media-viewer{
+  width:100%;
+  min-height:390px;
+  position:relative;
+}
+
+.media-content{
+  width:100%;
+  display:none;
+  animation:mediaEnter .55s cubic-bezier(.2,.8,.2,1);
+}
+
+.media-content.active{
+  display:block;
+}
+
+@keyframes mediaEnter{
+  from{
+    opacity:0;
+    transform:scale(.94) translateY(15px);
+  }
+
+  to{
+    opacity:1;
+    transform:scale(1) translateY(0);
+  }
+}
+
+.media-frame{
+  width:min(76vw,330px);
+  aspect-ratio:4/5;
+  margin:auto;
+  padding:2px;
+  border-radius:28px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.8),
+      #ff4f91,
+      #a875ff,
+      transparent
+    );
+  box-shadow:0 30px 100px rgba(0,0,0,.6);
+}
+
+.media-inner{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  position:relative;
+  border-radius:27px;
+  background:#07060c;
+}
+
+.media-inner img,
+.media-inner video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  background:#050409;
+}
+
+.media-inner img{
+  opacity:0;
+  transform:scale(1.08);
+  transition:1.2s;
+}
+
+.media-inner img.loaded{
+  opacity:1;
+  transform:scale(1);
+}
+
+.media-inner video{
+  opacity:1;
+}
+
+.media-placeholder{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:9px;
+  color:rgba(255,255,255,.35);
+  font-size:10px;
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(255,79,145,.12),
+      transparent 55%
+    ),
+    #07060c;
+}
+
+.media-placeholder strong{
+  font-size:40px;
+}
+
+.media-placeholder small{
+  direction:ltr;
+  opacity:.5;
+}
+
+.media-label{
+  margin-top:13px;
+  color:rgba(255,255,255,.55);
+  font-size:10px;
+}
+
+.media-caption{
+  color:rgba(255,255,255,.4);
+  font-size:10px;
+  margin-top:13px;
+}
+
+.media-note{
+  color:rgba(255,255,255,.22);
+  font-size:8px;
+  margin-top:6px;
+  direction:ltr;
+}
+
+/* ادامه */
+
+.media-next{
+  margin-top:17px;
+  min-width:195px;
+  padding:14px 23px;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:100px;
+  color:#fff;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,79,145,.16),
+      rgba(168,117,255,.12)
+    );
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+  font-family:inherit;
+  font-size:11px;
+  box-shadow:0 15px 45px rgba(0,0,0,.25);
+  transition:.3s;
+}
+
+.media-next span{
+  display:inline-block;
+  margin-right:8px;
+  transition:.3s;
+}
+
+.media-next:active{
+  transform:scale(.94);
+}
+
+/* LETTER */
+
+.letter{
+  width:100%;
+  max-width:460px;
+}
+
+.letter-card{
+  position:relative;
+  min-height:430px;
+  padding:28px 23px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:25px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.07),
+      rgba(255,255,255,.025)
+    );
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  overflow:hidden;
+  box-shadow:0 30px 100px rgba(0,0,0,.4);
+}
+
+.letter-card:before{
+  content:"";
+  position:absolute;
+  width:200px;
+  height:200px;
+  border-radius:50%;
+  background:rgba(255,79,145,.1);
+  filter:blur(60px);
+  top:-80px;
+  left:-80px;
+}
+
+.letter-label{
+  font-size:9px;
+  color:rgba(255,255,255,.3);
+  letter-spacing:4px;
+  direction:ltr;
+}
+
+.letter-card h2{
+  font-size:27px;
+  margin:20px 0;
+}
+
+.letter-text{
+  color:rgba(255,255,255,.7);
+  font-size:13px;
+  line-height:2.5;
+}
+
+.type-cursor{
+  display:inline-block;
+  width:5px;
+  height:15px;
+  background:#ff8eb9;
+  animation:blink .7s infinite;
+}
+
+@keyframes blink{
+  50%{opacity:0}
+}
+
+/* QUESTION */
+
+.question{
+  text-align:center;
+  width:100%;
+}
+
+.question-label{
+  color:rgba(255,255,255,.3);
+  font-size:9px;
+  letter-spacing:4px;
+  direction:ltr;
+}
+
+.question h2{
+  margin-top:22px;
+  font-size:28px;
+  line-height:1.8;
+}
+
+.question p{
+  color:rgba(255,255,255,.4);
+  font-size:12px;
+  margin-top:8px;
+}
+
+.q-buttons{
+  position:relative;
+  width:100%;
+  height:90px;
+  margin-top:30px;
+}
+
+.q-btn{
+  position:absolute;
+  top:0;
+  min-width:125px;
+  padding:14px 20px;
+  border-radius:100px;
+  color:#fff;
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--line);
+  font-size:12px;
+}
+
+.q-btn.yes{
+  right:calc(50% + 7px);
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  border:none;
+}
+
+.q-btn.no{
+  left:calc(50% + 7px);
+}
+
+/* FINAL */
+
+.final{
+  text-align:center;
+  width:100%;
+  max-width:700px;
+}
+
+.final-heart{
+  font-size:62px;
+  filter:drop-shadow(0 0 30px rgba(255,79,145,.7));
+  animation:heartBeat 1.4s infinite;
+  user-select:none;
+}
+
+@keyframes heartBeat{
+  0%,100%{transform:scale(1)}
+  12%{transform:scale(1.18)}
+  24%{transform:scale(1)}
+  38%{transform:scale(1.1)}
+}
+
+.final h1{
+  font-size:clamp(35px,9vw,60px);
+  margin-top:15px;
+}
+
+.final-line{
+  width:45px;
+  height:1px;
+  background:rgba(255,255,255,.4);
+  margin:22px auto;
+}
+
+.final p{
+  color:rgba(255,255,255,.72);
+  font-size:14px;
+  line-height:2.5;
+}
+
+.final strong{
+  color:white;
+}
+
+.signature{
+  margin-top:27px;
+  color:#ff9fc5;
+  font-size:13px;
+}
+
+/* SECRET */
+
+.secret{
+  position:fixed;
+  inset:0;
+  z-index:900;
+  background:rgba(2,1,7,.94);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  opacity:0;
+  visibility:hidden;
+  transition:.7s;
+  padding:30px;
+}
+
+.secret.show{
+  opacity:1;
+  visibility:visible;
+}
+
+.secret-inner{
+  max-width:420px;
+}
+
+.secret-icon{
+  font-size:60px;
+  margin-bottom:25px;
+}
+
+.secret h2{
+  font-size:28px;
+}
+
+.secret p{
+  color:rgba(255,255,255,.58);
+  font-size:13px;
+  line-height:2.3;
+  margin-top:15px;
+}
+
+.secret button{
+  margin-top:30px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.06);
+  color:white;
+  border-radius:100px;
+  padding:12px 25px;
+}
+
+/* FLASH */
+
+.flash{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:#fff;
+  opacity:0;
+  pointer-events:none;
+}
+
+.flash.fire{
+  animation:flash .7s ease;
+}
+
+@keyframes flash{
+  0%{opacity:0}
+  25%{opacity:.8}
+  100%{opacity:0}
+}
+
+/* LANDSCAPE */
+
+.rotate{
+  display:none;
+}
+
+@media(max-height:500px) and (orientation:landscape){
+
+  .rotate{
+    position:fixed;
+    inset:0;
+    z-index:2000;
+    background:#020106;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px;
+  }
+
+  .rotate div{
+    font-size:13px;
+    color:rgba(255,255,255,.7);
+    line-height:2;
+  }
+
+}
+
+/* SMALL PHONES */
+
+@media(max-width:360px){
+
+  .memory-card{
+    height:98px;
+  }
+
+  .media-frame{
+    width:min(72vw,290px);
+  }
+
+  .letter-card{
+    min-height:390px;
+  }
+
+}
+
+/* SHORT PHONES */
+
+@media(max-height:700px){
+
+  .media-title{
+    font-size:21px;
+    margin-bottom:7px;
+  }
+
+  .media-subtitle{
+    margin-bottom:10px;
+  }
+
+  .media-tabs{
+    margin-bottom:10px;
+  }
+
+  .media-viewer{
+    min-height:300px;
+  }
+
+  .media-frame{
+    width:min(62vw,270px);
+  }
+
+  .media-next{
+    margin-top:9px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="stars"></canvas>
+<canvas id="particles"></canvas>
+
+<div class="vignette"></div>
+<div class="noise"></div>
+<div class="flash" id="flash"></div>
+
+
+<div id="app">
+
+<!-- =====================================================
+     INTRO
+===================================================== -->
+
+<section class="screen active" id="s-intro">
+
+  <div class="intro">
+
+    <div class="logo-orbit">
+
+      <div class="orbit-dot"></div>
+
+      <div class="core"></div>
+
+    </div>
+
+    <h1>
+      یه جای کوچیک<br>
+      برای یه آدم خاص.
+    </h1>
+
+    <p>
+      PRIVATE UNIVERSE • M + A
+    </p>
+
+    <button
+      class="primary-btn"
+      onclick="start()"
+    >
+      وارد این دنیا شو
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     SCAN
+===================================================== -->
+
+<section class="screen" id="s-scan">
+
+  <div class="system">
+
+    <div class="system-title">
+      یه لحظه...
+    </div>
+
+    <div class="terminal">
+
+      <div class="term-top">
+        <b></b>
+        <b></b>
+        <b></b>
+      </div>
+
+      <div class="term-line">
+        <span>boot.memory</span>
+        <span class="ok">OK</span>
+      </div>
+
+      <div class="term-line">
+        <span>search.universe</span>
+        <span class="ok">OK</span>
+      </div>
+
+      <div class="term-line">
+        <span>humans</span>
+        <span id="humanCount">0</span>
+      </div>
+
+      <div class="term-line">
+        <span>special.people</span>
+        <span id="specialCount">0</span>
+      </div>
+
+      <div class="term-line">
+        <span>searching.name</span>
+        <span id="searchState">...</span>
+      </div>
+
+      <div class="term-line">
+        <span>result</span>
+        <span id="scanResult">WAIT</span>
+      </div>
+
+      <div class="term-bar">
+        <i id="scanProgress"></i>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     MEMORIES
+===================================================== -->
+
+<section class="screen" id="s-memory">
+
+  <div class="memory-wrap">
+
+    <h2>
+      سیستم چندتا خاطره پیدا کرد...
+    </h2>
+
+    <p>
+      بعضیاشون رو نمی‌شه با کلمه توضیح داد.
+    </p>
+
+    <div class="memory-grid">
+
+      <div class="memory-card">
+        <b>👋</b>
+        <small>اولین سلام</small>
+      </div>
+
+      <div class="memory-card">
+        <b>😂</b>
+        <small>خنده‌های بی‌دلیل</small>
+      </div>
+
+      <div class="memory-card">
+        <b>🌙</b>
+        <small>شب‌های طولانی</small>
+      </div>
+
+      <div class="memory-card">
+        <b>📱</b>
+        <small>«رسیدی؟»</small>
+      </div>
+
+      <div class="memory-card">
+        <b>❤️</b>
+        <small>دلتنگی</small>
+      </div>
+
+      <div class="memory-card">
+        <b>🫶</b>
+        <small>همین لحظه‌ها</small>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     HOLD
+===================================================== -->
+
+<section class="screen" id="s-touch">
+
+  <div class="interaction">
+
+    <div class="ring">
+
+      <div class="ring-core"></div>
+
+    </div>
+
+    <h2>
+      یه چیزی قفل شده...
+    </h2>
+
+    <p>
+      انگشتت رو روی نور نگه دار
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     NAME
+===================================================== -->
+
+<section class="screen" id="s-name">
+
+  <div class="name-wrap">
+
+    <div class="name-label">
+      FOUND ONE PERSON
+    </div>
+
+    <div class="arzoo">
+      ARZOO
+    </div>
+
+    <div class="name-sub">
+      نتیجه‌ای که سیستم نتونست ازش عبور کنه.
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     TIMELINE
+===================================================== -->
+
+<section class="screen" id="s-timeline">
+
+  <div class="timeline">
+
+    <h2>
+      اگر قرار بود داستانتون رو ثبت کنم...
+    </h2>
+
+    <div class="timeline-box">
+
+      <div
+        class="timeline-icon"
+        id="timelineIcon"
+      >
+        ✨
+      </div>
+
+      <div
+        class="timeline-big"
+        id="timelineBig"
+      >
+        یه شروع ساده
+      </div>
+
+      <div
+        class="timeline-small"
+        id="timelineSmall"
+      >
+        که هیچ‌کس نمی‌دونست قراره<br>
+        به کجا برسه.
+      </div>
+
+      <div class="timeline-dots">
+
+        <i class="active"></i>
+        <i></i>
+        <i></i>
+        <i></i>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     MEDIA
+     
+     فقط این فایل‌ها لازم هستند:
+
+     arzoo.jpg
+     video1.mp4
+     video2.mp4
+===================================================== -->
+
+<section class="screen" id="s-media">
+
+  <div class="media-wrap">
+
+    <div class="media-title">
+      یه تکه از دنیای آرزو ❤️
+    </div>
+
+    <div class="media-subtitle">
+      هر کدوم رو دوست داشتی ببین...
+    </div>
+
+
+    <!--
+      سه دکمه برای جابه‌جایی
+      هیچ حرکت خودکاری وجود ندارد
+    -->
+
+    <div class="media-tabs">
+
+      <button
+        class="media-tab active"
+        onclick="showMedia(0)"
+      >
+        <span>♡</span>
+        عکس
+      </button>
+
+      <button
+        class="media-tab"
+        onclick="showMedia(1)"
+      >
+        <span>▶</span>
+        ویدیو ۱
+      </button>
+
+      <button
+        class="media-tab"
+        onclick="showMedia(2)"
+      >
+        <span>▶</span>
+        ویدیو ۲
+      </button>
+
+    </div>
+
+
+    <div class="media-viewer">
+
+
+      <!-- =================================================
+           PHOTO
+      ================================================= -->
+
+      <div
+        class="media-content active"
+        id="mediaPhoto"
+      >
+
+        <div class="media-frame">
+
+          <div class="media-inner">
+
+            <div
+              class="media-placeholder"
+              id="photoPlaceholder"
+            >
+
+              <strong>♡</strong>
+
+              در حال باز کردن عکس...
+
+              <small>
+                arzoo.jpg
+              </small>
+
+            </div>
+
+            <img
+              id="photo"
+              src="arzoo.jpg"
+              alt="Arzoo"
+            >
+
+          </div>
+
+        </div>
+
+        <div class="media-label">
+          یک تصویر از آرزو ✨
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           VIDEO 1
+      ================================================= -->
+
+      <div
+        class="media-content"
+        id="mediaVideo1"
+      >
+
+        <div class="media-frame">
+
+          <div class="media-inner">
+
+            <div
+              class="media-placeholder"
+              id="video1Placeholder"
+            >
+
+              <strong>▶</strong>
+
+              در حال باز کردن ویدیو...
+
+              <small>
+                video1.mp4
+              </small>
+
+            </div>
+
+            <video
+              id="video1"
+              src="video1.mp4"
+              playsinline
+              controls
+              preload="metadata"
+            ></video>
+
+          </div>
+
+        </div>
+
+        <div class="media-label">
+          یه لحظه از خاطره‌هامون 🎬
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           VIDEO 2
+      ================================================= -->
+
+      <div
+        class="media-content"
+        id="mediaVideo2"
+      >
+
+        <div class="media-frame">
+
+          <div class="media-inner">
+
+            <div
+              class="media-placeholder"
+              id="video2Placeholder"
+            >
+
+              <strong>▶</strong>
+
+              در حال باز کردن ویدیو...
+
+              <small>
+                video2.mp4
+              </small>
+
+            </div>
+
+            <video
+              id="video2"
+              src="video2.mp4"
+              playsinline
+              controls
+              preload="metadata"
+            ></video>
+
+          </div>
+
+        </div>
+
+        <div class="media-label">
+          یکی دیگه از لحظه‌های قشنگمون ❤️
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="media-caption">
+      هر سه‌تا رو ببین... عجله‌ای نداریم ❤️
+    </div>
+
+    <div class="media-note">
+      هر وقت آماده بودی ادامه بده
+    </div>
+
+
+    <!--
+      فقط این دکمه باعث رفتن به مرحله بعد می‌شود
+    -->
+
+    <button
+      class="media-next"
+      onclick="continueFromMedia()"
+    >
+      دیدمشون ❤️
+      <span>←</span>
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     LETTER
+===================================================== -->
+
+<section class="screen" id="s-letter">
+
+  <div class="letter">
+
+    <div class="letter-card">
+
+      <div class="letter-label">
+        A MESSAGE FROM MEHDI
+      </div>
+
+      <h2>
+        آرزو جان...
+      </h2>
+
+      <div
+        class="letter-text"
+        id="letterText"
+      ></div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     QUESTION
+===================================================== -->
+
+<section class="screen" id="s-question">
+
+  <div class="question">
+
+    <div class="question-label">
+      ONE LAST THING
+    </div>
+
+    <h2>
+      اگه زمان برگرده<br>
+      به روز اول...
+    </h2>
+
+    <p>
+      باز هم منو انتخاب می‌کنی؟
+    </p>
+
+    <div class="q-buttons">
+
+      <button
+        class="q-btn yes"
+        onclick="yes()"
+      >
+        آره ❤️
+      </button>
+
+      <button
+        class="q-btn no"
+        id="noButton"
+        onclick="nope()"
+      >
+        نمی‌دونم :)
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     FINAL
+===================================================== -->
+
+<section class="screen" id="s-final">
+
+  <div class="final">
+
+    <div class="final-heart">
+      ❤️
+    </div>
+
+    <h1>
+      مهدی × آرزو
+    </h1>
+
+    <div class="final-line"></div>
+
+    <p>
+
+      بین تمام آدم‌هایی که می‌توانستم بشناسم...
+      <br>
+
+      بین تمام مسیرهایی که می‌توانستم بروم...
+      <br><br>
+
+      <strong>
+        خوشحالم که مسیر من به تو رسید.
+      </strong>
+
+      <br><br>
+
+      اگر زمان واقعاً برگردد، چیزی را عوض نمی‌کنم.
+      <br>
+
+      فقط برمی‌گردم به همان لحظه‌ای که تو وارد زندگی من شدی.
+
+      <br><br>
+
+      چون بعضی اتفاق‌ها اشتباه نیستند...
+      <br>
+
+      <strong>
+        اتفاقاً قشنگ‌ترین قسمت داستان‌اند.
+      </strong>
+
+    </p>
+
+    <div class="signature">
+      برای آرزو، از طرف مهدی ❤️
+    </div>
+
+  </div>
+
+</section>
+
+</div>
+
+
+<!-- =====================================================
+     TOP BAR
+===================================================== -->
+
+<div class="topbar">
+
+  <div
+    class="memory-counter"
+    id="chapter"
+  >
+    01 / 10
+  </div>
+
+  <button
+    class="icon-btn"
+    onclick="toggleMusic()"
+    id="musicBtn"
+  >
+    ♪
+  </button>
+
+</div>
+
+
+<div class="progress">
+  <i id="progress"></i>
+</div>
+
+
+<!-- =====================================================
+     SECRET
+===================================================== -->
+
+<div
+  class="secret"
+  id="secret"
+>
+
+  <div class="secret-inner">
+
+    <div class="secret-icon">
+      🌙
+    </div>
+
+    <h2>
+      یه راز کوچیک...
+    </h2>
+
+    <p>
+
+      بعضی چیزها رو نمی‌شه توی طراحی جا داد.
+
+      <br>
+
+      مثل اینکه چرا یک نفر می‌تونه کل حال آدم رو عوض کنه.
+
+      <br><br>
+
+      ولی فکر کنم جوابش رو می‌دونی.
+
+    </p>
+
+    <button onclick="closeSecret()">
+      برگردیم ❤️
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     MUSIC
+===================================================== -->
+
+<audio
+  id="music"
+  loop
+  preload="auto"
+>
+  <source
+    src="song.mp3"
+    type="audio/mpeg"
+  >
+</audio>
+
+
+<!-- =====================================================
+     ROTATE
+===================================================== -->
+
+<div class="rotate">
+
+  <div>
+
+    📱
+
+    <br><br>
+
+    گوشی رو عمودی نگه دار
+
+    <br>
+
+    این دنیا برای صفحه‌ی تو ساخته شده ❤️
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   FILES
+   فقط همین ۴ فایل را کنار HTML بگذار:
+
+   arzoo.jpg
+   video1.mp4
+   video2.mp4
+   song.mp3
+========================================================= */
+
+const CONFIG={
+
+  photo:"arzoo.jpg",
+
+  videos:[
+    "video1.mp4",
+    "video2.mp4"
+  ],
+
+  music:"song.mp3",
+
+  letter:[
+    "شاید این صفحه فقط چندتا انیمیشن و چند خط کد باشه...",
+    "ولی پشت تک‌تک این خط‌ها یه فکر بود.",
+    "اینکه چطوری می‌شه بهت گفت چقدر بودنت قشنگه.",
+    "من نمی‌دونم آینده دقیقاً چی برامون نوشته.",
+    "ولی می‌دونم از بین تمام چیزهایی که می‌تونستم آرزو کنم...",
+    "آشنایی با تو یکی از قشنگ‌ترین‌هاش بود.",
+    "پس این صفحه فقط برای توئه.",
+    "برای آرزو. ❤️"
+  ]
+
+};
+
+
+/* =========================================================
+   SCREEN SYSTEM
+========================================================= */
+
+const screens=[
+  "s-intro",
+  "s-scan",
+  "s-memory",
+  "s-touch",
+  "s-name",
+  "s-timeline",
+  "s-media",
+  "s-letter",
+  "s-question",
+  "s-final"
+];
+
+let step=0;
+
+const progress=
+  document.getElementById("progress");
+
+const chapter=
+  document.getElementById("chapter");
+
+const flash=
+  document.getElementById("flash");
+
+
+function go(id){
+
+  screens.forEach(s=>{
+
+    document
+      .getElementById(s)
+      .classList.remove("active");
+
+  });
+
+
+  document
+    .getElementById(id)
+    .classList.add("active");
+
+
+  const index=
+    screens.indexOf(id);
+
+
+  if(index>=0){
+
+    step=index;
+
+    progress.style.width=
+      (index/(screens.length-1)*100)+"%";
+
+    chapter.innerText=
+      String(index+1).padStart(2,"0")+
+      " / "+
+      String(screens.length).padStart(2,"0");
+
+  }
+
+}
+
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+const starsCanvas=
+  document.getElementById("stars");
+
+const starCtx=
+  starsCanvas.getContext("2d");
+
+const particlesCanvas=
+  document.getElementById("particles");
+
+const particleCtx=
+  particlesCanvas.getContext("2d");
+
+
+let W=innerWidth;
+let H=innerHeight;
+
+
+function resize(){
+
+  W=innerWidth;
+  H=innerHeight;
+
+  starsCanvas.width=W;
+  starsCanvas.height=H;
+
+  particlesCanvas.width=W;
+  particlesCanvas.height=H;
+
+  generateStars();
+
+}
+
+
+addEventListener(
+  "resize",
+  resize
+);
+
+
+let stars=[];
+
+
+function generateStars(){
+
+  stars=[];
+
+  const amount=
+    Math.min(
+      700,
+      Math.floor(W*H/1700)
+    );
+
+
+  for(let i=0;i<amount;i++){
+
+    stars.push({
+
+      x:Math.random()*W,
+
+      y:Math.random()*H,
+
+      r:Math.random()*1.5+.15,
+
+      speed:Math.random()*.35+.03,
+
+      alpha:Math.random()*.75+.15,
+
+      twinkle:Math.random()*Math.PI*2
+
+    });
+
+  }
+
+}
+
+
+function drawStars(){
+
+  starCtx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  for(const s of stars){
+
+    s.y+=s.speed;
+
+    s.twinkle+=.025;
+
+
+    if(s.y>H){
+
+      s.y=-5;
+
+      s.x=Math.random()*W;
+
+    }
+
+
+    const alpha=
+      s.alpha+
+      Math.sin(s.twinkle)*.12;
+
+
+    starCtx.beginPath();
+
+    starCtx.arc(
+      s.x,
+      s.y,
+      s.r,
+      0,
+      Math.PI*2
+    );
+
+    starCtx.fillStyle=
+      `rgba(255,255,255,${alpha})`;
+
+    starCtx.fill();
+
+  }
+
+
+  requestAnimationFrame(
+    drawStars
+  );
+
+}
+
+
+let particles=[];
+
+
+function burst(
+  x=W/2,
+  y=H/2,
+  amount=200,
+  force=1
+){
+
+  for(let i=0;i<amount;i++){
+
+    const angle=
+      Math.random()*Math.PI*2;
+
+    const speed=
+      (Math.random()*7+1.5)*force;
+
+
+    particles.push({
+
+      x,
+      y,
+
+      vx:
+        Math.cos(angle)*speed,
+
+      vy:
+        Math.sin(angle)*speed,
+
+      life:1,
+
+      size:
+        Math.random()*3+.6,
+
+      hue:
+        Math.random()<.7
+        ?
+        Math.random()*35+330
+        :
+        Math.random()*65+245
+
+    });
+
+  }
+
+}
+
+
+function drawParticles(){
+
+  particleCtx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  for(
+    let i=particles.length-1;
+    i>=0;
+    i--
+  ){
+
+    const p=particles[i];
+
+
+    p.x+=p.vx;
+    p.y+=p.vy;
+
+    p.vx*=.985;
+    p.vy*=.985;
+
+    p.vy+=.018;
+
+    p.life-=.009;
+
+
+    particleCtx.beginPath();
+
+    particleCtx.arc(
+      p.x,
+      p.y,
+      p.size,
+      0,
+      Math.PI*2
+    );
+
+
+    particleCtx.fillStyle=
+      `hsla(${p.hue},100%,78%,${p.life})`;
+
+
+    particleCtx.fill();
+
+
+    if(p.life<=0){
+
+      particles.splice(i,1);
+
+    }
+
+  }
+
+
+  requestAnimationFrame(
+    drawParticles
+  );
+
+}
+
+
+resize();
+
+drawStars();
+
+drawParticles();
+
+
+/* =========================================================
+   EFFECTS
+========================================================= */
+
+function flashScreen(){
+
+  flash.classList.remove(
+    "fire"
+  );
+
+  void flash.offsetWidth;
+
+  flash.classList.add(
+    "fire"
+  );
+
+}
+
+
+function vibrate(pattern){
+
+  if("vibrate" in navigator){
+
+    try{
+
+      navigator.vibrate(
+        pattern
+      );
+
+    }catch(e){}
+
+  }
+
+}
+
+
+/* =========================================================
+   MUSIC
+========================================================= */
+
+const music=
+  document.getElementById("music");
+
+const musicBtn=
+  document.getElementById("musicBtn");
+
+let musicPlaying=false;
+
+
+function startMusic(){
+
+  music.volume=.35;
+
+
+  music.play()
+    .then(()=>{
+
+      musicPlaying=true;
+
+      musicBtn.innerText="Ⅱ";
+
+    })
+    .catch(()=>{});
+
+}
+
+
+function toggleMusic(){
+
+  if(musicPlaying){
+
+    music.pause();
+
+    musicPlaying=false;
+
+    musicBtn.innerText="♪";
+
+  }else{
+
+    startMusic();
+
+  }
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+function start(){
+
+  startMusic();
+
+  go("s-scan");
+
+  runScan();
+
+}
+
+
+/* =========================================================
+   SCAN
+========================================================= */
+
+function runScan(){
+
+  const bar=
+    document.getElementById(
+      "scanProgress"
+    );
+
+  const humans=
+    document.getElementById(
+      "humanCount"
+    );
+
+  const special=
+    document.getElementById(
+      "specialCount"
+    );
+
+  const state=
+    document.getElementById(
+      "searchState"
+    );
+
+  const result=
+    document.getElementById(
+      "scanResult"
+    );
+
+
+  let p=0;
+
+
+  const interval=setInterval(()=>{
+
+    p+=Math.random()*9+3;
+
+
+    if(p>100){
+      p=100;
+    }
+
+
+    bar.style.width=
+      p+"%";
+
+
+    humans.innerText=
+      Math.floor(
+        800000000+
+        Math.random()*7200000000
+      ).toLocaleString();
+
+
+    special.innerText=
+      p<72
+      ?
+      "0"
+      :
+      "1";
+
+
+    state.innerText=
+      p<30
+      ?
+      "SEARCHING"
+      :
+      p<65
+      ?
+      "ANALYZING"
+      :
+      p<90
+      ?
+      "MATCHING"
+      :
+      "FOUND";
+
+
+    if(p>=100){
+
+      clearInterval(interval);
+
+
+      result.innerText=
+        "ARZOO";
+
+
+      result.classList.add(
+        "special"
+      );
+
+
+      vibrate([
+        30,
+        40,
+        80
+      ]);
+
+
+      setTimeout(()=>{
+
+        flashScreen();
+
+        burst(
+          W/2,
+          H/2,
+          300
+        );
+
+        go("s-memory");
+
+        showMemoryCards();
+
+      },1100);
+
+    }
+
+  },260);
+
+}
+
+
+/* =========================================================
+   MEMORY
+========================================================= */
+
+function showMemoryCards(){
+
+  const cards=
+    document.querySelectorAll(
+      ".memory-card"
+    );
+
+
+  cards.forEach((card,i)=>{
+
+    setTimeout(()=>{
+
+      card.classList.add(
+        "show"
+      );
+
+      vibrate(8);
+
+    },i*180);
+
+  });
+
+
+  setTimeout(
+    ()=>burst(
+      W/2,
+      H/2,
+      150
+    ),
+    1300
+  );
+
+
+  setTimeout(
+    ()=>go("s-touch"),
+    3900
+  );
+
+}
+
+
+/* =========================================================
+   HOLD TO UNLOCK
+========================================================= */
+
+const ring=
+  document.querySelector(".ring");
+
+let holdTimer=null;
+
+let unlocked=false;
+
+
+function beginHold(){
+
+  if(unlocked)return;
+
+  vibrate(10);
+
+  holdTimer=
+    setTimeout(
+      ()=>unlock(),
+      1000
+    );
+
+}
+
+
+function endHold(){
+
+  if(unlocked)return;
+
+  clearTimeout(
+    holdTimer
+  );
+
+}
+
+
+ring.addEventListener(
+  "pointerdown",
+  beginHold
+);
+
+ring.addEventListener(
+  "pointerup",
+  endHold
+);
+
+ring.addEventListener(
+  "pointercancel",
+  endHold
+);
+
+ring.addEventListener(
+  "pointerleave",
+  endHold
+);
+
+
+function unlock(){
+
+  if(unlocked)return;
+
+  unlocked=true;
+
+  clearTimeout(
+    holdTimer
+  );
+
+
+  vibrate([
+    30,
+    50,
+    30,
+    80
+  ]);
+
+
+  burst(
+    W/2,
+    H/2,
+    700,
+    1.1
+  );
+
+
+  flashScreen();
+
+
+  setTimeout(
+    ()=>go("s-name"),
+    900
+  );
+
+
+  setTimeout(
+    ()=>burst(
+      W/2,
+      H/2,
+      250
+    ),
+    1400
+  );
+
+
+  setTimeout(()=>{
+
+    go("s-timeline");
+
+    runTimeline();
+
+  },3600);
+
+}
+
+
+/* =========================================================
+   TIMELINE
+========================================================= */
+
+const timelineData=[
+
+  {
+    icon:"✨",
+    big:"یه شروع ساده",
+    small:
+      "که هیچ‌کس نمی‌دونست<br>قراره به کجا برسه."
+  },
+
+  {
+    icon:"😂",
+    big:"خنده‌های بیشتر",
+    small:
+      "و لحظه‌هایی که<br>بی‌دلیل قشنگ شدن."
+  },
+
+  {
+    icon:"🌙",
+    big:"دلتنگی",
+    small:
+      "همون جایی که فهمیدی<br>یک نفر دیگه معمولی نیست."
+  },
+
+  {
+    icon:"❤️",
+    big:"و حالا...",
+    small:
+      "یک داستان که هنوز<br>آخرش نوشته نشده."
+  }
+
+];
+
+
+function runTimeline(){
+
+  let index=0;
+
+
+  const icon=
+    document.getElementById(
+      "timelineIcon"
+    );
+
+  const big=
+    document.getElementById(
+      "timelineBig"
+    );
+
+  const small=
+    document.getElementById(
+      "timelineSmall"
+    );
+
+  const dots=
+    document.querySelectorAll(
+      ".timeline-dots i"
+    );
+
+
+  function update(){
+
+    icon.style.opacity=0;
+
+    big.style.opacity=0;
+
+    small.style.opacity=0;
+
+
+    setTimeout(()=>{
+
+      const data=
+        timelineData[index];
+
+
+      icon.innerText=
+        data.icon;
+
+
+      big.innerText=
+        data.big;
+
+
+      small.innerHTML=
+        data.small;
+
+
+      dots.forEach((d,i)=>{
+
+        d.classList.toggle(
+          "active",
+          i===index
+        );
+
+      });
+
+
+      icon.style.opacity=1;
+
+      big.style.opacity=1;
+
+      small.style.opacity=1;
+
+    },300);
+
+  }
+
+
+  update();
+
+
+  const timer=setInterval(()=>{
+
+    index++;
+
+
+    if(
+      index>=
+      timelineData.length
+    ){
+
+      clearInterval(timer);
+
+
+      setTimeout(()=>{
+
+        go("s-media");
+
+        initMedia();
+
+      },1000);
+
+
+      return;
+
+    }
+
+
+    update();
+
+  },1700);
+
+}
+
+
+/* =========================================================
+   MEDIA
+========================================================= */
+
+let currentMedia=0;
+
+let mediaReady=false;
+
+
+function initMedia(){
+
+  const photo=
+    document.getElementById(
+      "photo"
+    );
+
+  const video1=
+    document.getElementById(
+      "video1"
+    );
+
+  const video2=
+    document.getElementById(
+      "video2"
+    );
+
+
+  const photoPlaceholder=
+    document.getElementById(
+      "photoPlaceholder"
+    );
+
+  const video1Placeholder=
+    document.getElementById(
+      "video1Placeholder"
+    );
+
+  const video2Placeholder=
+    document.getElementById(
+      "video2Placeholder"
+    );
+
+
+  /* =========================
+     PHOTO
+  ========================= */
+
+  photo.src=
+    CONFIG.photo;
+
+
+  photo.onload=()=>{
+
+    photo.classList.add(
+      "loaded"
+    );
+
+    photoPlaceholder.style.display=
+      "none";
+
+  };
+
+
+  photo.onerror=()=>{
+
+    photoPlaceholder.innerHTML=`
+      <strong>×</strong>
+      عکس پیدا نشد
+      <small>arzoo.jpg</small>
+    `;
+
+  };
+
+
+  /* =========================
+     VIDEO 1
+  ========================= */
+
+  video1.src=
+    CONFIG.videos[0];
+
+
+  video1.addEventListener(
+    "loadeddata",
+    ()=>{
+
+      video1Placeholder.style.display=
+        "none";
+
+    },
+    {once:true}
+  );
+
+
+  video1.addEventListener(
+    "error",
+    ()=>{
+
+      video1Placeholder.innerHTML=`
+        <strong>×</strong>
+        ویدیو پیدا نشد
+        <small>video1.mp4</small>
+      `;
+
+    }
+  );
+
+
+  /* =========================
+     VIDEO 2
+  ========================= */
+
+  video2.src=
+    CONFIG.videos[1];
+
+
+  video2.addEventListener(
+    "loadeddata",
+    ()=>{
+
+      video2Placeholder.style.display=
+        "none";
+
+    },
+    {once:true}
+  );
+
+
+  video2.addEventListener(
+    "error",
+    ()=>{
+
+      video2Placeholder.innerHTML=`
+        <strong>×</strong>
+        ویدیو پیدا نشد
+        <small>video2.mp4</small>
+      `;
+
+    }
+  );
+
+
+  mediaReady=true;
+
+
+  burst(
+    W/2,
+    H/2,
+    300
+  );
+
+}
+
+
+/* =========================================================
+   SHOW PHOTO / VIDEO
+========================================================= */
+
+function showMedia(index){
+
+  currentMedia=index;
+
+
+  const contents=[
+
+    document.getElementById(
+      "mediaPhoto"
+    ),
+
+    document.getElementById(
+      "mediaVideo1"
+    ),
+
+    document.getElementById(
+      "mediaVideo2"
+    )
+
+  ];
+
+
+  const tabs=
+    document.querySelectorAll(
+      ".media-tab"
+    );
+
+
+  contents.forEach(
+    (content,i)=>{
+
+      content.classList.toggle(
+        "active",
+        i===index
+      );
+
+    }
+  );
+
+
+  tabs.forEach(
+    (tab,i)=>{
+
+      tab.classList.toggle(
+        "active",
+        i===index
+      );
+
+    }
+  );
+
+
+  const video1=
+    document.getElementById(
+      "video1"
+    );
+
+  const video2=
+    document.getElementById(
+      "video2"
+    );
+
+
+  /*
+    وقتی از ویدیو خارج می‌شویم
+    آن را متوقف می‌کنیم.
+  */
+
+  if(index!==1){
+
+    video1.pause();
+
+  }
+
+
+  if(index!==2){
+
+    video2.pause();
+
+  }
+
+
+  /*
+    هر بار وارد ویدیو می‌شویم
+    از ابتدای ویدیو شروع می‌شود.
+  */
+
+  if(index===1){
+
+    try{
+      video1.currentTime=0;
+    }catch(e){}
+
+  }
+
+
+  if(index===2){
+
+    try{
+      video2.currentTime=0;
+    }catch(e){}
+
+  }
+
+
+  vibrate(15);
+
+
+  burst(
+    W/2,
+    H/2,
+    45,
+    .5
+  );
+
+}
+
+
+/* =========================================================
+   MANUAL CONTINUE
+========================================================= */
+
+function continueFromMedia(){
+
+  const button=
+    document.querySelector(
+      ".media-next"
+    );
+
+
+  button.innerHTML=
+    "بریم ادامه داستان... ❤️";
+
+
+  button.style.transform=
+    "scale(.94)";
+
+
+  vibrate([
+    30,
+    50,
+    80
+  ]);
+
+
+  setTimeout(()=>{
+
+    button.style.transform="";
+
+    go("s-letter");
+
+    typeLetter();
+
+  },350);
+
+}
+
+
+/* =========================================================
+   LETTER
+========================================================= */
+
+function typeLetter(){
+
+  const target=
+    document.getElementById(
+      "letterText"
+    );
+
+
+  target.innerHTML="";
+
+
+  const text=
+    CONFIG.letter.join(
+      "\n\n"
+    );
+
+
+  let index=0;
+
+
+  function type(){
+
+    if(index<text.length){
+
+      const char=
+        text[index];
+
+
+      if(char==="\n"){
+
+        target.innerHTML+=
+          "<br>";
+
+      }else{
+
+        target.innerHTML+=
+          char;
+
+      }
+
+
+      index++;
+
+
+      const delay=
+        char==="."
+        ?
+        170
+        :
+        char==="،"
+        ?
+        120
+        :
+        Math.random()*20+22;
+
+
+      setTimeout(
+        type,
+        delay
+      );
+
+    }else{
+
+      target.innerHTML+=
+        '<span class="type-cursor"></span>';
+
+
+      setTimeout(()=>{
+
+        go("s-question");
+
+      },2200);
+
+    }
+
+  }
+
+
+  type();
+
+}
+
+
+/* =========================================================
+   NO BUTTON
+========================================================= */
+
+let noClicks=0;
+
+
+function nope(){
+
+  const button=
+    document.getElementById(
+      "noButton"
+    );
+
+
+  noClicks++;
+
+
+  const texts=[
+
+    "مطمئنی؟ 👀",
+
+    "یه بار دیگه فکر کن...",
+
+    "نه دیگه 😂",
+
+    "این گزینه مشکوکه :)",
+
+    "آخرین فرصت 😌"
+
+  ];
+
+
+  button.innerText=
+    texts[
+      Math.min(
+        noClicks-1,
+        texts.length-1
+      )
+    ];
+
+
+  const maxX=
+    Math.max(
+      70,
+      W/2-70
+    );
+
+
+  const x=
+    (Math.random()-.5)*maxX;
+
+
+  const y=
+    (Math.random()-.5)*35;
+
+
+  button.style.transform=
+    `translate(${x}px,${y}px)`;
+
+
+  vibrate(20);
+
+}
+
+
+/* =========================================================
+   YES
+========================================================= */
+
+function yes(){
+
+  vibrate([
+    40,
+    60,
+    40,
+    100
+  ]);
+
+
+  flashScreen();
+
+
+  burst(
+    W/2,
+    H/2,
+    1000,
+    1.25
+  );
+
+
+  setTimeout(()=>{
+
+    go("s-final");
+
+    finalCelebration();
+
+  },900);
+
+}
+
+
+/* =========================================================
+   FINAL CELEBRATION
+========================================================= */
+
+function finalCelebration(){
+
+  let count=0;
+
+
+  const timer=
+    setInterval(()=>{
+
+      burst(
+        Math.random()*W,
+        Math.random()*H*.78,
+        100,
+        .8
+      );
+
+
+      count++;
+
+
+      if(count>18){
+
+        clearInterval(timer);
+
+      }
+
+    },380);
+
+}
+
+
+/* =========================================================
+   TOUCH RIPPLE
+========================================================= */
+
+document.addEventListener(
+  "pointerdown",
+  e=>{
+
+    const ripple=
+      document.createElement(
+        "div"
+      );
+
+
+    ripple.style.position=
+      "fixed";
+
+    ripple.style.left=
+      e.clientX+"px";
+
+    ripple.style.top=
+      e.clientY+"px";
+
+    ripple.style.width=
+      "12px";
+
+    ripple.style.height=
+      "12px";
+
+    ripple.style.border=
+      "1px solid rgba(255,255,255,.65)";
+
+    ripple.style.borderRadius=
+      "50%";
+
+    ripple.style.pointerEvents=
+      "none";
+
+    ripple.style.zIndex=
+      "800";
+
+
+    document.body.appendChild(
+      ripple
+    );
+
+
+    ripple.animate(
+
+      [
+
+        {
+          transform:
+            "translate(-6px,-6px) scale(1)",
+          opacity:.8
+        },
+
+        {
+          transform:
+            "translate(-6px,-6px) scale(12)",
+          opacity:0
+        }
+
+      ],
+
+      {
+        duration:800,
+        easing:"ease-out"
+      }
+
+    );
+
+
+    setTimeout(
+      ()=>ripple.remove(),
+      850
+    );
+
+  }
+);
+
+
+/* =========================================================
+   SWIPE START
+========================================================= */
+
+let touchStartX=0;
+
+let touchStartY=0;
+
+
+document.addEventListener(
+  "touchstart",
+  e=>{
+
+    touchStartX=
+      e.changedTouches[0].clientX;
+
+    touchStartY=
+      e.changedTouches[0].clientY;
+
+  },
+  {passive:true}
+);
+
+
+document.addEventListener(
+  "touchend",
+  e=>{
+
+    const x=
+      e.changedTouches[0].clientX;
+
+    const y=
+      e.changedTouches[0].clientY;
+
+
+    const dx=
+      x-touchStartX;
+
+    const dy=
+      y-touchStartY;
+
+
+    if(
+      Math.abs(dy)>80 &&
+      Math.abs(dy)>Math.abs(dx) &&
+      step===0 &&
+      dy<0
+    ){
+
+      start();
+
+    }
+
+  },
+  {passive:true}
+);
+
+
+/* =========================================================
+   DEVICE PARALLAX
+========================================================= */
+
+function orientation(e){
+
+  if(e.gamma==null)return;
+
+
+  const x=
+    Math.max(
+      -1,
+      Math.min(
+        1,
+        e.gamma/35
+      )
+    );
+
+
+  const y=
+    Math.max(
+      -1,
+      Math.min(
+        1,
+        e.beta/35
+      )
+    );
+
+
+  starsCanvas.style.transform=
+    `translate(${x*12}px,${y*8}px) scale(1.025)`;
+
+
+  particlesCanvas.style.transform=
+    `translate(${x*5}px,${y*4}px)`;
+
+}
+
+
+if(
+  window.DeviceOrientationEvent &&
+  typeof DeviceOrientationEvent.requestPermission!=="function"
+){
+
+  addEventListener(
+    "deviceorientation",
+    orientation
+  );
+
+}
+
+
+/* =========================================================
+   SECRET WORD
+========================================================= */
+
+let secretWord="";
+
+
+document.addEventListener(
+  "keydown",
+  e=>{
+
+    secretWord+=
+      e.key.toLowerCase();
+
+
+    if(secretWord.length>12){
+
+      secretWord=
+        secretWord.slice(-12);
+
+    }
+
+
+    if(
+      secretWord.includes("arzoo")
+    ){
+
+      openSecret();
+
+      secretWord="";
+
+    }
+
+  }
+);
+
+
+function openSecret(){
+
+  document
+    .getElementById("secret")
+    .classList.add("show");
+
+
+  burst(
+    W/2,
+    H/2,
+    700
+  );
+
+}
+
+
+function closeSecret(){
+
+  document
+    .getElementById("secret")
+    .classList.remove("show");
+
+}
+
+
+/* =========================================================
+   FINAL HEART SECRET
+========================================================= */
+
+const finalHeart=
+  document.querySelector(
+    ".final-heart"
+  );
+
+let secretHold;
+
+
+finalHeart.addEventListener(
+  "pointerdown",
+  ()=>{
+
+    secretHold=
+      setTimeout(
+        ()=>openSecret(),
+        900
+      );
+
+  }
+);
+
+
+[
+  "pointerup",
+  "pointercancel",
+  "pointerleave"
+].forEach(event=>{
+
+  finalHeart.addEventListener(
+    event,
+    ()=>clearTimeout(
+      secretHold
+    )
+  );
+
+});
+
+
+/* =========================================================
+   MUSIC ERROR
+========================================================= */
+
+music.addEventListener(
+  "error",
+  ()=>{
+
+    musicPlaying=false;
+
+    musicBtn.innerText="♪";
+
+  }
+);
+
+
+/* =========================================================
+   VISIBILITY
+========================================================= */
+
+document.addEventListener(
+  "visibilitychange",
+  ()=>{
+
+    if(
+      document.hidden &&
+      musicPlaying
+    ){
+
+      music.pause();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+history.pushState(
+  null,
+  "",
+  location.href
+);
+
+
+window.addEventListener(
+  "popstate",
+  ()=>{
+
+    history.pushState(
+      null,
+      "",
+      location.href
+    );
+
+  }
+);
+
+
+/* =========================================================
+   FINAL AMBIENT PARTICLES
+========================================================= */
+
+setInterval(()=>{
+
+  if(
+    document
+      .getElementById("s-final")
+      .classList
+      .contains("active")
+  ){
+
+    burst(
+      Math.random()*W,
+      Math.random()*H*.7,
+      12,
+      .4
+    );
+
+  }
+
+},700);
+
+</script>
+
+</body>
+</html>
